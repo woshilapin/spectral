@@ -3,6 +3,7 @@ use super::{AssertionFailure, DescriptiveSpec, Spec};
 use std::borrow::Borrow;
 
 pub trait StrAssertions {
+    fn equals_to<'r, E: Borrow<&'r str>>(&mut self, expected: E);
     fn starts_with<'r, E: Borrow<&'r str>>(&mut self, expected: E);
     fn ends_with<'r, E: Borrow<&'r str>>(&mut self, expected: E);
     fn contains<'r, E: Borrow<&'r str>>(&mut self, expected: E);
@@ -10,6 +11,16 @@ pub trait StrAssertions {
 }
 
 impl<'s> StrAssertions for Spec<'s, &'s str> {
+    /// Asserts that the subject `&str` is equals to the provided `&str`.
+    ///
+    /// ```rust,ignore
+    /// assert_that(&"Hello").equals_to(&"H");
+    /// ```
+    fn equals_to<'r, E: Borrow<&'r str>>(&mut self, expected: E) {
+        let subject = &self.subject;
+        equals_to(self, subject, expected);
+    }
+
     /// Asserts that the subject `&str` starts with the provided `&str`.
     ///
     /// ```rust,ignore
@@ -52,6 +63,16 @@ impl<'s> StrAssertions for Spec<'s, &'s str> {
 }
 
 impl<'s> StrAssertions for Spec<'s, String> {
+    /// Asserts that the subject `String` is equals to the provided `&str`.
+    ///
+    /// ```rust,ignore
+    /// assert_that(&"Hello".to_owned()).equals_to(&"H");
+    /// ```
+    fn equals_to<'r, E: Borrow<&'r str>>(&mut self, expected: E) {
+        let subject = &self.subject;
+        equals_to(self, subject, expected);
+    }
+
     /// Asserts that the subject `String` starts with the provided `&str`.
     ///
     /// ```rust,ignore
@@ -93,9 +114,30 @@ impl<'s> StrAssertions for Spec<'s, String> {
     }
 }
 
-fn starts_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(spec: &'s S,
-                                                                   subject: &str,
-                                                                   expected: E) {
+fn equals_to<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(
+    spec: &'s S,
+    subject: &str,
+    expected: E,
+) {
+    let borrowed_expected = expected.borrow();
+
+    if !subject.eq(*borrowed_expected) {
+        AssertionFailure::from_spec(spec)
+            .with_expected(format!("string equals to <{:?}>", borrowed_expected))
+            .with_actual(format!("<{:?}>", subject))
+            .with_message(format!(
+                "{}",
+                pretty_assertions::Comparison::new(&borrowed_expected, &subject,)
+            ))
+            .fail();
+    }
+}
+
+fn starts_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(
+    spec: &'s S,
+    subject: &str,
+    expected: E,
+) {
     let borrowed_expected = expected.borrow();
 
     if !subject.starts_with(borrowed_expected) {
@@ -149,6 +191,10 @@ mod tests {
     #[test]
     fn should_allow_multiple_borrow_forms_for_str() {
         let value = "Hello";
+        assert_that(&value).equals_to("Hello");
+        assert_that(&value).equals_to(&mut "Hello");
+        assert_that(&value).equals_to(&"Hello");
+
         assert_that(&value).starts_with("H");
         assert_that(&value).starts_with(&mut "H");
         assert_that(&value).starts_with(&"H");
@@ -160,6 +206,20 @@ mod tests {
         assert_that(&value).contains("l");
         assert_that(&value).contains(&mut "l");
         assert_that(&value).contains(&"l");
+    }
+
+    #[test]
+    fn should_not_panic_if_str_equals_to_value() {
+        let value = "Hello";
+        assert_that(&value).equals_to(&"Hello");
+    }
+
+    #[test]
+    #[should_panic(expected = "\n\texpected: string equals to <\"World\">\
+                               \n\t but was: <\"Hello\">")]
+    fn should_panic_if_str_does_not_equals_to_value() {
+        let value = "Hello";
+        assert_that(&value).equals_to(&"World");
     }
 
     #[test]
