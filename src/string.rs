@@ -152,9 +152,11 @@ fn starts_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(
     }
 }
 
-fn ends_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(spec: &'s S,
-                                                                 subject: &str,
-                                                                 expected: E) {
+fn ends_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(
+    spec: &'s S,
+    subject: &str,
+    expected: E,
+) {
     let borrowed_expected = expected.borrow();
 
     if !subject.ends_with(borrowed_expected) {
@@ -169,9 +171,11 @@ fn ends_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(spec: &'s S,
     }
 }
 
-fn contains<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(spec: &'s S,
-                                                                subject: &str,
-                                                                expected: E) {
+fn contains<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(
+    spec: &'s S,
+    subject: &str,
+    expected: E,
+) {
     let borrowed_expected = expected.borrow();
 
     if !subject.contains(borrowed_expected) {
@@ -242,7 +246,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: string starting with <\"A\">\
-                   \n\t but was: <\"Hello\">")]
+                               \n\t but was: <\"Hello\">")]
     fn should_panic_if_str_does_not_start_with_value() {
         let value = "Hello";
         assert_that(&value).starts_with(&"A");
@@ -311,7 +315,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: string starting with <\"A\">\
-                   \n\t but was: <\"Hello\">")]
+                               \n\t but was: <\"Hello\">")]
     fn should_panic_if_string_does_not_start_with_value() {
         let value = "Hello".to_owned();
         assert_that(&value).starts_with(&"A");
@@ -355,5 +359,4 @@ mod tests {
         let value = "Hello".to_owned();
         assert_that(&value).is_empty();
     }
-
 }

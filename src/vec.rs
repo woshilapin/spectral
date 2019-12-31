@@ -66,9 +66,8 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: an empty vec\
-                   \n\t but was: a vec with length <1>")]
+                               \n\t but was: a vec with length <1>")]
     fn should_panic_if_vec_was_expected_to_be_empty_and_is_not() {
         assert_that(&vec![1]).is_empty();
     }
-
 }

@@ -5,20 +5,23 @@ use std::cmp::PartialEq;
 use std::fmt::Debug;
 
 pub trait OptionAssertions<'r, T>
-    where T: Debug
+where
+    T: Debug,
 {
     fn is_some(&mut self) -> Spec<'r, T>;
     fn is_none(&mut self);
 }
 
 pub trait ContainingOptionAssertions<T>
-    where T: Debug + PartialEq
+where
+    T: Debug + PartialEq,
 {
     fn contains_value<E: Borrow<T>>(&mut self, expected_value: E);
 }
 
 impl<'s, T> ContainingOptionAssertions<T> for Spec<'s, Option<T>>
-    where T: Debug + PartialEq
+where
+    T: Debug + PartialEq,
 {
     /// Asserts that the subject is a `Some` containing the expected value. The subject type must
     /// be an `Option`.
@@ -33,8 +36,7 @@ impl<'s, T> ContainingOptionAssertions<T> for Spec<'s, Option<T>>
             Some(ref val) => {
                 if !val.eq(borrowed_expected_value) {
                     AssertionFailure::from_spec(self)
-                        .with_expected(format!("option to contain <{:?}>",
-                                               borrowed_expected_value))
+                        .with_expected(format!("option to contain <{:?}>", borrowed_expected_value))
                         .with_actual(format!("<{:?}>", val))
                         .fail();
                 }
@@ -50,7 +52,8 @@ impl<'s, T> ContainingOptionAssertions<T> for Spec<'s, Option<T>>
 }
 
 impl<'s, T> OptionAssertions<'s, T> for Spec<'s, Option<T>>
-    where T: Debug
+where
+    T: Debug,
 {
     /// Asserts that the subject is `Some`. The subject type must be an `Option`.
     ///
@@ -61,14 +64,12 @@ impl<'s, T> OptionAssertions<'s, T> for Spec<'s, Option<T>>
     /// ```
     fn is_some(&mut self) -> Spec<'s, T> {
         match *self.subject {
-            Some(ref val) => {
-                Spec {
-                    subject: val,
-                    subject_name: self.subject_name,
-                    location: self.location.clone(),
-                    description: self.description,
-                }
-            }
+            Some(ref val) => Spec {
+                subject: val,
+                subject_name: self.subject_name,
+                location: self.location.clone(),
+                description: self.description,
+            },
             None => {
                 AssertionFailure::from_spec(self)
                     .with_expected(format!("option[some]"))
@@ -162,5 +163,4 @@ mod tests {
         let option = Some("Hello");
         assert_that(&option).is_none();
     }
-
 }

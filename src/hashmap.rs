@@ -17,9 +17,11 @@ pub trait KeyHashMapAssertions<'s, K: Hash + Eq, V> {
 
 pub trait EntryHashMapAssertions<'s, K: Hash + Eq, V: PartialEq> {
     fn contains_entry<E: Borrow<K>, F: Borrow<V>>(&mut self, expected_key: E, expected_value: F);
-    fn does_not_contain_entry<E: Borrow<K>, F: Borrow<V>>(&mut self,
-                                                          expected_key: E,
-                                                          expected_value: F);
+    fn does_not_contain_entry<E: Borrow<K>, F: Borrow<V>>(
+        &mut self,
+        expected_key: E,
+        expected_value: F,
+    );
 }
 
 impl<'s, K, V> HashMapAssertions<'s> for Spec<'s, HashMap<K, V>>
@@ -98,7 +100,10 @@ where
         let subject_keys: Vec<&K> = subject.keys().collect();
 
         AssertionFailure::from_spec(self)
-            .with_expected(format!("hashmap to contain key <{:?}>", borrowed_expected_key))
+            .with_expected(format!(
+                "hashmap to contain key <{:?}>",
+                borrowed_expected_key
+            ))
             .with_actual(format!("<{:?}>", subject_keys))
             .fail();
 
@@ -120,7 +125,10 @@ where
 
         if subject.get(borrowed_expected_key).is_some() {
             AssertionFailure::from_spec(self)
-                .with_expected(format!("hashmap to not contain key <{:?}>", borrowed_expected_key))
+                .with_expected(format!(
+                    "hashmap to not contain key <{:?}>",
+                    borrowed_expected_key
+                ))
                 .with_actual(format!("present in hashmap"))
                 .fail();
         }
@@ -146,9 +154,10 @@ where
         let borrowed_expected_key = expected_key.borrow();
         let borrowed_expected_value = expected_value.borrow();
 
-        let expected_message = format!("hashmap containing key <{:?}> with value <{:?}>",
-                                       borrowed_expected_key,
-                                       borrowed_expected_value);
+        let expected_message = format!(
+            "hashmap containing key <{:?}> with value <{:?}>",
+            borrowed_expected_key, borrowed_expected_value
+        );
 
         if let Some(value) = subject.get(borrowed_expected_key) {
             if value.eq(borrowed_expected_value) {
@@ -157,9 +166,10 @@ where
 
             AssertionFailure::from_spec(self)
                 .with_expected(expected_message)
-                .with_actual(format!("key <{:?}> with value <{:?}> instead",
-                                     borrowed_expected_key,
-                                     value))
+                .with_actual(format!(
+                    "key <{:?}> with value <{:?}> instead",
+                    borrowed_expected_key, value
+                ))
                 .fail();
 
             unreachable!();
@@ -171,7 +181,6 @@ where
             .with_expected(expected_message)
             .with_actual(format!("no matching key, keys are <{:?}>", subject_keys))
             .fail();
-
     }
 
     /// Asserts that the subject hashmap does not contains the provided key and value.
@@ -183,9 +192,11 @@ where
     ///
     /// assert_that(&test_map).does_not_contain_entry(&"hello", &"hey");
     /// ```
-    fn does_not_contain_entry<E: Borrow<K>, F: Borrow<V>>(&mut self,
-                                                          expected_key: E,
-                                                          expected_value: F) {
+    fn does_not_contain_entry<E: Borrow<K>, F: Borrow<V>>(
+        &mut self,
+        expected_key: E,
+        expected_value: F,
+    ) {
         let subject = self.subject;
         let borrowed_expected_key = expected_key.borrow();
         let borrowed_expected_value = expected_value.borrow();
@@ -196,9 +207,10 @@ where
             }
 
             AssertionFailure::from_spec(self)
-                .with_expected(format!("hashmap to not contain key <{:?}> with value <{:?}>",
-                                       borrowed_expected_key,
-                                       borrowed_expected_value))
+                .with_expected(format!(
+                    "hashmap to not contain key <{:?}> with value <{:?}>",
+                    borrowed_expected_key, borrowed_expected_value
+                ))
                 .with_actual(format!("present in hashmap"))
                 .fail();
         }
@@ -250,7 +262,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: an empty hashmap\
-                   \n\t but was: a hashmap with length <1>")]
+                               \n\t but was: a hashmap with length <1>")]
     fn should_panic_if_hashmap_was_expected_to_be_empty_and_is_not() {
         let mut test_map = HashMap::new();
         test_map.insert(1, 1);
@@ -293,7 +305,9 @@ mod tests {
         let mut test_map = HashMap::new();
         test_map.insert("hello", "hi");
 
-        assert_that(&test_map).contains_key(&"hello").is_equal_to(&"hi");
+        assert_that(&test_map)
+            .contains_key(&"hello")
+            .is_equal_to(&"hi");
     }
 
     #[test]
@@ -316,7 +330,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: hashmap to not contain key <\"hello\">\
-                   \n\t but was: present in hashmap")]
+                               \n\t but was: present in hashmap")]
     fn should_panic_if_hashmap_does_contain_key_when_not_expected() {
         let mut test_map = HashMap::new();
         test_map.insert("hello", "hi");
@@ -344,8 +358,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: hashmap containing key <\"hey\"> with value <\"hi\">\
-                   \n\t but was: no matching key, keys are <[\"hello\"]>")]
+    #[should_panic(
+        expected = "\n\texpected: hashmap containing key <\"hey\"> with value <\"hi\">\
+                    \n\t but was: no matching key, keys are <[\"hello\"]>"
+    )]
     fn should_panic_if_hashmap_contains_entry_without_key() {
         let mut test_map = HashMap::new();
         test_map.insert("hello", "hi");
@@ -354,8 +370,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: hashmap containing key <\"hi\"> with value <\"hey\">\
-                   \n\t but was: key <\"hi\"> with value <\"hello\"> instead")]
+    #[should_panic(
+        expected = "\n\texpected: hashmap containing key <\"hi\"> with value <\"hey\">\
+                    \n\t but was: key <\"hi\"> with value <\"hello\"> instead"
+    )]
     fn should_panic_if_hashmap_contains_entry_with_different_value() {
         let mut test_map = HashMap::new();
         test_map.insert("hi", "hello");
@@ -381,8 +399,8 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: hashmap to not contain key <\"hello\"> \
-    with value <\"hi\">\
-                   \n\t but was: present in hashmap")]
+                               with value <\"hi\">\
+                               \n\t but was: present in hashmap")]
     fn should_panic_if_hashmap_contains_entry_if_not_expected() {
         let mut test_map = HashMap::new();
         test_map.insert("hello", "hi");

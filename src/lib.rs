@@ -147,6 +147,7 @@ use colours::{TERM_BLUE, TERM_BOLD, TERM_GREEN, TERM_RED, TERM_RESET};
 
 pub mod boolean;
 pub mod hashmap;
+pub mod iter;
 pub mod numeric;
 pub mod option;
 pub mod path;
@@ -183,23 +184,19 @@ macro_rules! assert_that {
     (&$subject:tt) => {
         assert_that!($subject)
     };
-    ($subject:tt) => {
-        {
-            let line = line!();
-            let file =  file!();
-            assert_that(&$subject).at_location(format!("{}:{}", file, line))
-        }
-    };
+    ($subject:tt) => {{
+        let line = line!();
+        let file = file!();
+        assert_that(&$subject).at_location(format!("{}:{}", file, line))
+    }};
     (&$subject:expr) => {
         assert_that!($subject)
     };
-    ($subject:expr) => {
-        {
-            let line = line!();
-            let file =  file!();
-            assert_that(&$subject).at_location(format!("{}:{}", file, line))
-        }
-    };
+    ($subject:expr) => {{
+        let line = line!();
+        let file = file!();
+        assert_that(&$subject).at_location(format!("{}:{}", file, line))
+    }};
 }
 
 #[macro_export]
@@ -207,13 +204,11 @@ macro_rules! asserting {
     (&$description:tt) => {
         asserting!($description)
     };
-    ($description:tt) => {
-        {
-            let line = line!();
-            let file =  file!();
-            asserting(&$description).at_location(format!("{}:{}", file, line))
-        }
-    };
+    ($description:tt) => {{
+        let line = line!();
+        let file = file!();
+        asserting(&$description).at_location(format!("{}:{}", file, line))
+    }};
 }
 
 pub trait DescriptiveSpec<'r> {
@@ -259,7 +254,7 @@ pub struct Spec<'s, S: 's> {
 /// The subject must be a reference.
 pub fn assert_that<'s, S>(subject: &'s S) -> Spec<'s, S> {
     Spec {
-        subject: subject,
+        subject,
         subject_name: None,
         location: None,
         description: None,
@@ -285,7 +280,7 @@ impl<'r> SpecDescription<'r> {
     /// Creates a new assertion, passing through its description.
     pub fn that<S>(self, subject: &'r S) -> Spec<'r, S> {
         Spec {
-            subject: subject,
+            subject,
             subject_name: None,
             location: self.location,
             description: Some(self.value),
@@ -311,7 +306,7 @@ impl<'r, T: DescriptiveSpec<'r>> AssertionFailure<'r, T> {
     /// Construct a new AssertionFailure from a DescriptiveSpec.
     pub fn from_spec(spec: &'r T) -> AssertionFailure<'r, T> {
         AssertionFailure {
-            spec: spec,
+            spec,
             expected: None,
             actual: None,
             message: None,
@@ -339,7 +334,7 @@ impl<'r, T: DescriptiveSpec<'r>> AssertionFailure<'r, T> {
     /// Builds the failure message with a description (if present), the expected value,
     /// and the actual value and then calls `panic` with the created message.
     pub fn fail(&mut self) {
-        if !self.expected.is_some() || !self.actual.is_some() {
+        if self.expected.is_none() || self.actual.is_none() {
             panic!("invalid assertion");
         }
 
@@ -430,7 +425,8 @@ impl<'s, S> Spec<'s, S> {
 }
 
 impl<'s, S> Spec<'s, S>
-    where S: Debug + PartialEq
+where
+    S: Debug + PartialEq,
 {
     /// Asserts that the actual value and the expected value are equal. The value type must
     /// implement `PartialEq`.
@@ -462,7 +458,10 @@ impl<'s, S> Spec<'s, S>
 
         if subject.eq(borrowed_expected) {
             AssertionFailure::from_spec(self)
-                .with_expected(format!("<{:?}> to not equal <{:?}>", subject, borrowed_expected))
+                .with_expected(format!(
+                    "<{:?}> to not equal <{:?}>",
+                    subject, borrowed_expected
+                ))
                 .with_actual(format!("equal"))
                 .fail();
         }
@@ -470,7 +469,8 @@ impl<'s, S> Spec<'s, S>
 }
 
 impl<'s, S> Spec<'s, S>
-    where S: Debug
+where
+    S: Debug,
 {
     /// Accepts a function accepting the value type which returns a bool. Returning false will
     /// cause the assertion to fail.
@@ -482,7 +482,8 @@ impl<'s, S> Spec<'s, S>
     /// assert_that(&"hello").matches(|x| x.eq(&"hello"));
     /// ```
     pub fn matches<F>(&mut self, matching_function: F)
-        where F: Fn(&'s S) -> bool
+    where
+        F: Fn(&'s S) -> bool,
     {
         let subject = self.subject;
 
@@ -500,7 +501,8 @@ impl<'s, S> Spec<'s, S>
     /// assert_that(&test_struct).map(|val| &val.value).is_equal_to(&5);
     /// ```
     pub fn map<F, T>(self, mapping_function: F) -> Spec<'s, T>
-        where F: Fn(&'s S) -> &'s T
+    where
+        F: Fn(&'s S) -> &'s T,
     {
         Spec {
             subject: mapping_function(self.subject),
@@ -558,19 +560,21 @@ mod tests {
     #[should_panic(expected = "\n\tclosure:\n\texpectation failed for value <\"Hello\">")]
     fn should_contain_assertion_description_if_message_is_provided() {
         let value = "Hello";
-        asserting(&"closure").that(&value).matches(|val| val.eq(&"Hi"));
+        asserting(&"closure")
+            .that(&value)
+            .matches(|val| val.eq(&"Hi"));
     }
 
     #[test]
     #[should_panic(expected = "\n\texpected: <2>\n\t but was: <1>\
-                   \n\n\tat location: src/lib.rs:")]
+                               \n\n\tat location: src/lib.rs:")]
     fn should_contain_file_and_line_in_panic_for_assertions() {
         assert_that!(&1).is_equal_to(&2);
     }
 
     #[test]
     #[should_panic(expected = "\n\texpectation failed for value <\"Hello\">\
-                   \n\n\tat location: src/lib.rs:")]
+                               \n\n\tat location: src/lib.rs:")]
     fn should_contain_file_and_line_for_assertions_if_message_is_provided() {
         let value = "Hello";
         assert_that!(&value).matches(|val| val.eq(&"Hi"));
@@ -578,32 +582,40 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\ttest condition:\n\texpected: <2>\n\t but was: <1>\
-                   \n\n\tat location: src/lib.rs:")]
+                               \n\n\tat location: src/lib.rs:")]
     fn should_contain_file_and_line_in_panic_for_descriptive_assertions() {
         asserting!(&"test condition").that(&1).is_equal_to(&2);
     }
 
     #[test]
     #[should_panic(expected = "\n\tclosure:\n\texpectation failed for value <\"Hello\">\
-                   \n\n\tat location: src/lib.rs:")]
+                               \n\n\tat location: src/lib.rs:")]
     fn should_contain_file_and_line_for_descriptive_assertions_if_message_is_provided() {
         let value = "Hello";
-        asserting!(&"closure").that(&value).matches(|val| val.eq(&"Hi"));
+        asserting!(&"closure")
+            .that(&value)
+            .matches(|val| val.eq(&"Hi"));
     }
 
     #[test]
-    #[should_panic(expected = "\n\tfor subject [number one]\n\texpected: <2>\n\t but was: <1>\
-                   \n\n\tat location: src/lib.rs:")]
+    #[should_panic(
+        expected = "\n\tfor subject [number one]\n\texpected: <2>\n\t but was: <1>\
+                    \n\n\tat location: src/lib.rs:"
+    )]
     fn should_contain_subject_name_in_panic_for_assertions() {
         assert_that!(&1).named(&"number one").is_equal_to(&2);
     }
 
     #[test]
-    #[should_panic(expected = "\n\tfor subject [a word]\n\texpectation failed for value <\"Hello\">\
-                   \n\n\tat location: src/lib.rs:")]
+    #[should_panic(
+        expected = "\n\tfor subject [a word]\n\texpectation failed for value <\"Hello\">\
+                    \n\n\tat location: src/lib.rs:"
+    )]
     fn should_contain_subject_name_in_panic_for_assertions_if_message_is_provided() {
         let value = "Hello";
-        assert_that!(&value).named(&"a word").matches(|val| val.eq(&"Hi"));
+        assert_that!(&value)
+            .named(&"a word")
+            .matches(|val| val.eq(&"Hi"));
     }
 
     #[test]
@@ -658,12 +670,13 @@ mod tests {
     #[test]
     fn should_be_able_to_map_to_inner_field_of_struct_when_matching() {
         let test_struct = TestStruct { value: 5 };
-        assert_that(&test_struct).map(|val| &val.value).is_equal_to(&5);
+        assert_that(&test_struct)
+            .map(|val| &val.value)
+            .is_equal_to(&5);
     }
 
     #[derive(Debug, PartialEq)]
     struct TestStruct {
         pub value: u8,
     }
-
 }

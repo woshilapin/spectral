@@ -11,7 +11,6 @@ pub trait PathAssertions {
     fn has_file_name<'r, E: Borrow<&'r str>>(&mut self, expected_file_name: E);
 }
 
-
 impl<'s> PathAssertions for Spec<'s, &'s Path> {
     /// Asserts that the subject `Path` refers to an existing location.
     ///
@@ -142,26 +141,29 @@ fn is_a_directory<'s, S: DescriptiveSpec<'s>>(subject: &Path, spec: &'s S) {
     }
 }
 
-
-fn has_file_name<'s, S: DescriptiveSpec<'s>>(subject: &Path,
-                                             expected_file_name: &str,
-                                             spec: &'s S) {
+fn has_file_name<'s, S: DescriptiveSpec<'s>>(
+    subject: &Path,
+    expected_file_name: &str,
+    spec: &'s S,
+) {
     let subject_file_name = match subject.file_name() {
-        Some(os_string) => {
-            match os_string.to_str() {
-                Some(val) => val,
-                None => {
-                    fail_from_file_name(spec,
-                                        expected_file_name,
-                                        format!("an invalid UTF-8 file name"));
-                    unreachable!();
-                }
+        Some(os_string) => match os_string.to_str() {
+            Some(val) => val,
+            None => {
+                fail_from_file_name(
+                    spec,
+                    expected_file_name,
+                    format!("an invalid UTF-8 file name"),
+                );
+                unreachable!();
             }
-        }
+        },
         None => {
-            fail_from_file_name(spec,
-                                expected_file_name,
-                                format!("a non-resolvable path <{:?}>", subject));
+            fail_from_file_name(
+                spec,
+                expected_file_name,
+                format!("a non-resolvable path <{:?}>", subject),
+            );
             unreachable!();
         }
     };

@@ -4,24 +4,31 @@ use std::borrow::Borrow;
 use std::fmt::Debug;
 
 pub trait ResultAssertions<'s, T, E>
-    where T: Debug,
-          E: Debug
+where
+    T: Debug,
+    E: Debug,
 {
     fn is_ok(&mut self) -> Spec<'s, T>;
     fn is_err(&mut self) -> Spec<'s, E>;
 }
 
 pub trait ContainingResultAssertions<T, E>
-    where T: Debug,
-          E: Debug
+where
+    T: Debug,
+    E: Debug,
 {
-    fn is_ok_containing<V: Borrow<T>>(&mut self, expected_value: V) where T: PartialEq;
-    fn is_err_containing<V: Borrow<E>>(&mut self, expected_value: V) where E: PartialEq;
+    fn is_ok_containing<V: Borrow<T>>(&mut self, expected_value: V)
+    where
+        T: PartialEq;
+    fn is_err_containing<V: Borrow<E>>(&mut self, expected_value: V)
+    where
+        E: PartialEq;
 }
 
 impl<'s, T, E> ContainingResultAssertions<T, E> for Spec<'s, Result<T, E>>
-    where T: Debug,
-          E: Debug
+where
+    T: Debug,
+    E: Debug,
 {
     /// Asserts that the subject is an `Ok` Result containing the expected value.
     /// The subject type must be a `Result`.
@@ -30,7 +37,8 @@ impl<'s, T, E> ContainingResultAssertions<T, E> for Spec<'s, Result<T, E>>
     /// assert_that(&Result::Ok::<usize, usize>(1)).is_ok_containing(&1);
     /// ```
     fn is_ok_containing<V: Borrow<T>>(&mut self, expected_value: V)
-        where T: PartialEq
+    where
+        T: PartialEq,
     {
         let borrowed_expected_value = expected_value.borrow();
 
@@ -59,7 +67,8 @@ impl<'s, T, E> ContainingResultAssertions<T, E> for Spec<'s, Result<T, E>>
     /// assert_that(&Result::Err::<usize, usize>(1)).is_err_containing(&1);
     /// ```
     fn is_err_containing<V: Borrow<E>>(&mut self, expected_value: V)
-        where E: PartialEq
+    where
+        E: PartialEq,
     {
         let borrowed_expected_value = expected_value.borrow();
 
@@ -87,8 +96,9 @@ fn build_detail_message<T: Debug>(variant: &'static str, value: T) -> String {
 }
 
 impl<'s, T, E> ResultAssertions<'s, T, E> for Spec<'s, Result<T, E>>
-    where T: Debug,
-          E: Debug
+where
+    T: Debug,
+    E: Debug,
 {
     /// Asserts that the subject is `Ok`. The value type must be a `Result`.
     ///
@@ -99,14 +109,12 @@ impl<'s, T, E> ResultAssertions<'s, T, E> for Spec<'s, Result<T, E>>
     /// ```
     fn is_ok(&mut self) -> Spec<'s, T> {
         match *self.subject {
-            Ok(ref val) => {
-                Spec {
-                    subject: val,
-                    subject_name: self.subject_name,
-                    location: self.location.clone(),
-                    description: self.description,
-                }
-            }
+            Ok(ref val) => Spec {
+                subject: val,
+                subject_name: self.subject_name,
+                location: self.location.clone(),
+                description: self.description,
+            },
             Err(ref err) => {
                 AssertionFailure::from_spec(self)
                     .with_expected(format!("result[ok]"))
@@ -127,14 +135,12 @@ impl<'s, T, E> ResultAssertions<'s, T, E> for Spec<'s, Result<T, E>>
     /// ```
     fn is_err(&mut self) -> Spec<'s, E> {
         match *self.subject {
-            Err(ref val) => {
-                Spec {
-                    subject: val,
-                    subject_name: self.subject_name,
-                    location: self.location.clone(),
-                    description: self.description,
-                }
-            }
+            Err(ref val) => Spec {
+                subject: val,
+                subject_name: self.subject_name,
+                location: self.location.clone(),
+                description: self.description,
+            },
             Ok(ref val) => {
                 AssertionFailure::from_spec(self)
                     .with_expected(format!("result[error]"))
@@ -214,7 +220,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[ok] containing <\"Hi\">\
-                   \n\t but was: Result[ok] containing <\"Hello\">")]
+                               \n\t but was: Result[ok] containing <\"Hello\">")]
     fn should_panic_if_result_is_ok_without_expected_value() {
         let result: Result<&str, &str> = Ok("Hello");
         assert_that(&result).is_ok_containing(&"Hi");
@@ -222,7 +228,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[ok] containing <\"Hi\">\
-                   \n\t but was: Result[err] containing <\"Hi\">")]
+                               \n\t but was: Result[err] containing <\"Hi\">")]
     fn should_panic_if_result_is_err_if_ok_with_value_expected() {
         let result: Result<&str, &str> = Err("Hi");
         assert_that(&result).is_ok_containing(&"Hi");
@@ -252,7 +258,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[err] containing <\"Oh no\">\
-                   \n\t but was: Result[err] containing <\"Whoops\">")]
+                               \n\t but was: Result[err] containing <\"Whoops\">")]
     fn should_panic_if_result_is_err_without_expected_value() {
         let result: Result<&str, &str> = Err("Whoops");
         assert_that(&result).is_err_containing(&"Oh no");
@@ -260,10 +266,9 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[err] containing <\"Oh no\">\
-                   \n\t but was: Result[ok] containing <\"Oh no\">")]
+                               \n\t but was: Result[ok] containing <\"Oh no\">")]
     fn should_panic_if_result_is_ok_if_err_with_value_expected() {
         let result: Result<&str, &str> = Ok("Oh no");
         assert_that(&result).is_err_containing(&"Oh no");
     }
-
 }
