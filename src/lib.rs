@@ -143,7 +143,7 @@ use std::borrow::Borrow;
 use std::cmp::PartialEq;
 use std::fmt::Debug;
 
-use colours::{TERM_RED, TERM_BOLD, TERM_RESET};
+use colours::{TERM_BLUE, TERM_BOLD, TERM_GREEN, TERM_RED, TERM_RESET};
 
 pub mod boolean;
 pub mod hashmap;
@@ -154,13 +154,14 @@ pub mod prelude;
 pub mod result;
 pub mod string;
 pub mod vec;
-pub mod iter;
 
 // Disable colours during tests, otherwise trying to assert on the panic message becomes
 // significantly more annoying.
 #[cfg(not(test))]
 mod colours {
     pub const TERM_RED: &'static str = "\x1B[31m";
+    pub const TERM_GREEN: &'static str = "\x1B[32m";
+    pub const TERM_BLUE: &'static str = "\x1B[34m";
     pub const TERM_BOLD: &'static str = "\x1B[1m";
     pub const TERM_RESET: &'static str = "\x1B[0m";
 }
@@ -168,6 +169,8 @@ mod colours {
 #[cfg(test)]
 mod colours {
     pub const TERM_RED: &'static str = "";
+    pub const TERM_GREEN: &'static str = "";
+    pub const TERM_BLUE: &'static str = "";
     pub const TERM_BOLD: &'static str = "";
     pub const TERM_RESET: &'static str = "";
 }
@@ -340,14 +343,21 @@ impl<'r, T: DescriptiveSpec<'r>> AssertionFailure<'r, T> {
         let subject_name = self.maybe_build_subject_name();
         let description = self.maybe_build_description();
 
-        panic!(format!("{}{}\n\t{}expected: {}\n\t but was: {}{}\n{}",
-                       description,
-                       subject_name,
-                       TERM_RED,
-                       self.expected.clone().unwrap(),
-                       self.actual.clone().unwrap(),
-                       TERM_RESET,
-                       location))
+        panic!(format!(
+            "{}{}\n\texpected: {}{}{}\n\t but was: {}{}{}\n{}{}{}{}",
+            description,
+            subject_name,
+            TERM_GREEN,
+            self.expected.clone().unwrap(),
+            TERM_RESET,
+            TERM_RED,
+            self.actual.clone().unwrap(),
+            TERM_RESET,
+            self.message.clone().unwrap_or_else(String::new),
+            TERM_BLUE,
+            location,
+            TERM_RESET,
+        ))
     }
 
     /// Calls `panic` with the provided message, prepending the assertion description
@@ -357,13 +367,17 @@ impl<'r, T: DescriptiveSpec<'r>> AssertionFailure<'r, T> {
         let subject_name = self.maybe_build_subject_name();
         let description = self.maybe_build_description();
 
-        panic!(format!("{}{}\n\t{}{}{}\n{}",
-                       description,
-                       subject_name,
-                       TERM_RED,
-                       message,
-                       TERM_RESET,
-                       location))
+        panic!(format!(
+            "{}{}\n\t{}{}{}\n{}{}{}",
+            description,
+            subject_name,
+            TERM_RED,
+            message,
+            TERM_RESET,
+            TERM_BLUE,
+            location,
+            TERM_RESET,
+        ))
     }
 
     fn maybe_build_location(&self) -> String {
