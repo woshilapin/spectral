@@ -1,8 +1,8 @@
 pub use super::{asserting, assert_that};
 pub use super::boolean::BooleanAssertions;
-pub use super::hashmap::HashMapAssertions;
 pub use super::iter::{ContainingIntoIterAssertions, ContainingIteratorAssertions,
                       MappingIterAssertions};
+pub use super::hashmap::{EntryHashMapAssertions, HashMapAssertions, KeyHashMapAssertions};
 pub use super::numeric::OrderedAssertions;
 pub use super::option::{OptionAssertions, ContainingOptionAssertions};
 pub use super::path::PathAssertions;
