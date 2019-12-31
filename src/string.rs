@@ -144,6 +144,10 @@ fn starts_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(
         AssertionFailure::from_spec(spec)
             .with_expected(format!("string starting with <{:?}>", borrowed_expected))
             .with_actual(format!("<{:?}>", subject))
+            .with_message(format!(
+                "{}",
+                pretty_assertions::Comparison::new(&borrowed_expected, &subject,)
+            ))
             .fail();
     }
 }
@@ -157,6 +161,10 @@ fn ends_with<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(spec: &'s S,
         AssertionFailure::from_spec(spec)
             .with_expected(format!("string ending with <{:?}>", borrowed_expected))
             .with_actual(format!("<{:?}>", subject))
+            .with_message(format!(
+                "{}",
+                pretty_assertions::Comparison::new(&borrowed_expected, &subject,)
+            ))
             .fail();
     }
 }
@@ -170,6 +178,10 @@ fn contains<'r, 's, S: DescriptiveSpec<'s>, E: Borrow<&'r str>>(spec: &'s S,
         AssertionFailure::from_spec(spec)
             .with_expected(format!("string containing <{:?}>", borrowed_expected))
             .with_actual(format!("<{:?}>", subject))
+            .with_message(format!(
+                "{}",
+                pretty_assertions::Comparison::new(&borrowed_expected, &subject,)
+            ))
             .fail();
     }
 }

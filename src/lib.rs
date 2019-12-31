@@ -230,6 +230,7 @@ pub struct AssertionFailure<'r, T: 'r> {
     spec: &'r T,
     expected: Option<String>,
     actual: Option<String>,
+    message: Option<String>,
 }
 
 /// A description for an assertion.
@@ -313,23 +314,26 @@ impl<'r, T: DescriptiveSpec<'r>> AssertionFailure<'r, T> {
             spec: spec,
             expected: None,
             actual: None,
+            message: None,
         }
     }
 
     /// Builder method to add the expected value for the panic message.
     pub fn with_expected(&mut self, expected: String) -> &mut Self {
-        let mut assertion = self;
-        assertion.expected = Some(expected);
-
-        assertion
+        self.expected = Some(expected);
+        self
     }
 
     /// Builder method to add the actual value for the panic message.
     pub fn with_actual(&mut self, actual: String) -> &mut Self {
-        let mut assertion = self;
-        assertion.actual = Some(actual);
+        self.actual = Some(actual);
+        self
+    }
 
-        assertion
+    /// Builder method to add an additionnal message to the assertion
+    pub fn with_message(&mut self, message: String) -> &mut Self {
+        self.message = Some(message);
+        self
     }
 
     /// Builds the failure message with a description (if present), the expected value,
