@@ -1,7 +1,7 @@
 use super::{AssertionFailure, Spec};
 
 use std::borrow::Borrow;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::hash::Hash;
 
@@ -63,6 +63,49 @@ where
             AssertionFailure::from_spec(self)
                 .with_expected(format!("an empty hashmap"))
                 .with_actual(format!("a hashmap with length <{:?}>", subject.len()))
+                .fail();
+        }
+    }
+}
+
+impl<'s, V> HashMapAssertions<'s> for Spec<'s, HashSet<V>>
+where
+    V: Debug,
+{
+    /// Asserts that the length of the subject hashset is equal to the provided length. The subject
+    /// type must be of `HashSet`.
+    ///
+    /// ```rust,ignore
+    /// let mut test_set = HashSet::new();
+    /// test_set.insert(1);
+    /// test_set.insert(2);
+    ///
+    /// assert_that(&test_set).has_length(2);
+    /// ```
+    fn has_length(&mut self, expected: usize) {
+        let subject = self.subject;
+
+        if subject.len() != expected {
+            AssertionFailure::from_spec(self)
+                .with_expected(format!("hashset to have length <{}>", expected))
+                .with_actual(format!("<{}>", subject.len()))
+                .fail();
+        }
+    }
+
+    /// Asserts that the subject hashset is empty. The subject type must be of `HashSet`.
+    ///
+    /// ```rust,ignore
+    /// let test_set: HashSet<u8> = HashSet::new();
+    /// assert_that(&test_set).is_empty();
+    /// ```
+    fn is_empty(&mut self) {
+        let subject = self.subject;
+
+        if !subject.is_empty() {
+            AssertionFailure::from_spec(self)
+                .with_expected(format!("an empty hashset"))
+                .with_actual(format!("a hashset with length <{:?}>", subject.len()))
                 .fail();
         }
     }
@@ -222,7 +265,7 @@ mod tests {
 
     use super::super::prelude::*;
 
-    use std::collections::HashMap;
+    use std::collections::{HashMap, HashSet};
 
     #[test]
     fn should_not_panic_if_hashmap_length_matches_expected() {
@@ -268,6 +311,41 @@ mod tests {
         test_map.insert(1, 1);
 
         assert_that(&test_map).is_empty();
+    }
+
+    #[test]
+    fn should_not_panic_if_hashset_length_matches_expected() {
+        let mut test_set = HashSet::new();
+        test_set.insert(1);
+        test_set.insert(2);
+
+        assert_that(&test_set).has_length(2);
+    }
+
+    #[test]
+    #[should_panic(expected = "\n\texpected: hashset to have length <1>\n\t but was: <2>")]
+    fn should_panic_if_hashset_length_does_not_match_expected() {
+        let mut test_set = HashSet::new();
+        test_set.insert(1);
+        test_set.insert(2);
+
+        assert_that(&test_set).has_length(1);
+    }
+
+    #[test]
+    fn should_not_panic_if_hashset_was_expected_to_be_empty_and_is() {
+        let test_set: HashSet<u8> = HashSet::new();
+        assert_that(&test_set).is_empty();
+    }
+
+    #[test]
+    #[should_panic(expected = "\n\texpected: an empty hashset\
+                               \n\t but was: a hashset with length <1>")]
+    fn should_panic_if_hashset_was_expected_to_be_empty_and_is_not() {
+        let mut test_set = HashSet::new();
+        test_set.insert(1);
+
+        assert_that(&test_set).is_empty();
     }
 
     #[test]
