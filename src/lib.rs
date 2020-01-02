@@ -204,6 +204,12 @@ macro_rules! asserting {
     (&$description:expr) => {
         asserting!($description)
     };
+    ($description:tt, $($param:expr),*) => {
+        asserting!(format!($description, $($param),*))
+    };
+    ($description:tt, $($param:expr),*,) => {
+        asserting!(format!($description, $($param),*))
+    };
     ($description:expr) => {{
         let line = line!();
         let file = file!();
