@@ -343,7 +343,7 @@ impl<'r, T: DescriptiveSpec<'r>> AssertionFailure<'r, T> {
         let description = self.maybe_build_description();
 
         panic!(format!(
-            "{}{}\n\texpected: {}{}{}\n\t but was: {}{}{}\n{}{}{}{}",
+            "{}{}\n\texpected: {}{}{}\n\tbut was: {}{}{}\n{}{}{}{}",
             description,
             subject_name,
             TERM_GREEN,
@@ -551,7 +551,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\ttest condition:\n\texpected: <2>\n\t but was: <1>")]
+    #[should_panic(expected = "\n\ttest condition:\n\texpected: <2>\n\tbut was: <1>")]
     fn should_contain_assertion_description_in_panic() {
         asserting(&"test condition").that(&1).is_equal_to(&2);
     }
@@ -566,7 +566,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: <2>\n\t but was: <1>\
+    #[should_panic(expected = "\n\texpected: <2>\n\tbut was: <1>\
                                \n\n\tat location: src/lib.rs:")]
     fn should_contain_file_and_line_in_panic_for_assertions() {
         assert_that!(&1).is_equal_to(&2);
@@ -581,7 +581,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\ttest condition:\n\texpected: <2>\n\t but was: <1>\
+    #[should_panic(expected = "\n\ttest condition:\n\texpected: <2>\n\tbut was: <1>\
                                \n\n\tat location: src/lib.rs:")]
     fn should_contain_file_and_line_in_panic_for_descriptive_assertions() {
         asserting!(&"test condition").that(&1).is_equal_to(&2);
@@ -599,7 +599,7 @@ mod tests {
 
     #[test]
     #[should_panic(
-        expected = "\n\tfor subject [number one]\n\texpected: <2>\n\t but was: <1>\
+        expected = "\n\tfor subject [number one]\n\texpected: <2>\n\tbut was: <1>\
                     \n\n\tat location: src/lib.rs:"
     )]
     fn should_contain_subject_name_in_panic_for_assertions() {
@@ -631,7 +631,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: <2>\n\t but was: <1>")]
+    #[should_panic(expected = "\n\texpected: <2>\n\tbut was: <1>")]
     fn should_panic_on_unequal_subjects() {
         assert_that(&1).is_equal_to(&2);
     }
@@ -649,7 +649,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: <1> to not equal <1>\n\t but was: equal")]
+    #[should_panic(expected = "\n\texpected: <1> to not equal <1>\n\tbut was: equal")]
     fn should_panic_on_equal_subjects_if_expected_unequal() {
         assert_that(&1).is_not_equal_to(&1);
     }
