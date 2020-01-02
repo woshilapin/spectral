@@ -152,7 +152,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: value less than <2>\n\t but was: <3>")]
+    #[should_panic(expected = "\n\texpected: value less than <2>\n\tbut was: <3>")]
     fn should_panic_if_value_is_greater_than_expected() {
         assert_that(&3).is_less_than(&2);
     }
@@ -171,7 +171,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: value less than or equal to <2>\n\t but was: <3>")]
+    #[should_panic(expected = "\n\texpected: value less than or equal to <2>\n\tbut was: <3>")]
     fn should_panic_if_value_is_greater_than_or_not_equal_to_expected() {
         assert_that(&3).is_less_than_or_equal_to(&2);
     }
@@ -189,7 +189,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: value greater than <3>\n\t but was: <2>")]
+    #[should_panic(expected = "\n\texpected: value greater than <3>\n\tbut was: <2>")]
     fn should_panic_if_value_is_less_than_expected() {
         assert_that(&2).is_greater_than(&3);
     }
@@ -208,7 +208,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: value greater than or equal to <3>\n\t but was: <2>")]
+    #[should_panic(expected = "\n\texpected: value greater than or equal to <3>\n\tbut was: <2>")]
     fn should_panic_if_value_is_less_than_or_not_equal_to_expected() {
         assert_that(&2).is_greater_than_or_equal_to(&3);
     }
@@ -233,28 +233,28 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: float close to <1.0> (tolerance of <0.01>)\
-                               \n\t but was: <2.0>")]
+                               \n\tbut was: <2.0>")]
     fn should_panic_if_float_is_not_close_to() {
         assert_that(&2.0f64).is_close_to(1.0f64, 0.01f64);
     }
 
     #[test]
     #[should_panic(expected = "\n\texpected: float close to <1.0> (tolerance of <0.01>)\
-                               \n\t but was: <NaN>")]
+                               \n\tbut was: <NaN>")]
     fn should_panic_if_float_is_nan() {
         assert_that(&Float::nan()).is_close_to(1.0f64, 0.01f64);
     }
 
     #[test]
     #[should_panic(expected = "\n\texpected: float close to <1.0> (tolerance of <0.01>)\
-                               \n\t but was: <inf>")]
+                               \n\tbut was: <inf>")]
     fn should_panic_if_float_is_infinity() {
         assert_that(&Float::infinity()).is_close_to(1.0f64, 0.01f64);
     }
 
     #[test]
     #[should_panic(expected = "\n\texpected: float close to <1.0> (tolerance of <0.01>)\
-                               \n\t but was: <-inf>")]
+                               \n\tbut was: <-inf>")]
     fn should_panic_if_float_is_negative_infinity() {
         assert_that(&Float::neg_infinity()).is_close_to(1.0f64, 0.01f64);
     }

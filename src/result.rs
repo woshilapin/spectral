@@ -165,7 +165,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: result[ok]\n\t but was: result[error]<\"Oh no\">")]
+    #[should_panic(expected = "\n\texpected: result[ok]\n\tbut was: result[error]<\"Oh no\">")]
     fn should_panic_if_result_is_expected_to_be_ok_and_is_not() {
         let result: Result<&str, &str> = Err("Oh no");
         assert_that(&result).is_ok();
@@ -184,7 +184,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: result[error]\n\t but was: result[ok]<\"Hello\">")]
+    #[should_panic(expected = "\n\texpected: result[error]\n\tbut was: result[ok]<\"Hello\">")]
     fn should_panic_if_result_is_expected_to_be_error_and_is_not() {
         let result: Result<&str, &str> = Ok("Hello");
         assert_that(&result).is_err();
@@ -220,7 +220,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[ok] containing <\"Hi\">\
-                               \n\t but was: Result[ok] containing <\"Hello\">")]
+                               \n\tbut was: Result[ok] containing <\"Hello\">")]
     fn should_panic_if_result_is_ok_without_expected_value() {
         let result: Result<&str, &str> = Ok("Hello");
         assert_that(&result).is_ok_containing(&"Hi");
@@ -228,7 +228,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[ok] containing <\"Hi\">\
-                               \n\t but was: Result[err] containing <\"Hi\">")]
+                               \n\tbut was: Result[err] containing <\"Hi\">")]
     fn should_panic_if_result_is_err_if_ok_with_value_expected() {
         let result: Result<&str, &str> = Err("Hi");
         assert_that(&result).is_ok_containing(&"Hi");
@@ -258,7 +258,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[err] containing <\"Oh no\">\
-                               \n\t but was: Result[err] containing <\"Whoops\">")]
+                               \n\tbut was: Result[err] containing <\"Whoops\">")]
     fn should_panic_if_result_is_err_without_expected_value() {
         let result: Result<&str, &str> = Err("Whoops");
         assert_that(&result).is_err_containing(&"Oh no");
@@ -266,7 +266,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Result[err] containing <\"Oh no\">\
-                               \n\t but was: Result[ok] containing <\"Oh no\">")]
+                               \n\tbut was: Result[ok] containing <\"Oh no\">")]
     fn should_panic_if_result_is_ok_if_err_with_value_expected() {
         let result: Result<&str, &str> = Ok("Oh no");
         assert_that(&result).is_err_containing(&"Oh no");

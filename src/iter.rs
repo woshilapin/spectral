@@ -412,7 +412,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: iterator to contain <5>\n\t but was: <[1, 2, 3]>")]
+    #[should_panic(expected = "\n\texpected: iterator to contain <5>\n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_vec_does_not_contain_value() {
         let test_vec = vec![1, 2, 3];
         assert_that(&test_vec).contains(&5);
@@ -425,7 +425,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: iterator to not contain <2>\n\t but was: <[1, 2, 3]>")]
+    #[should_panic(expected = "\n\texpected: iterator to not contain <2>\n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_vec_does_contain_value_and_expected_not_to() {
         let test_vec = vec![1, 2, 3];
         assert_that(&test_vec).does_not_contain(&2);
@@ -442,7 +442,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: iterator to contain <5>\n\t but was: <[1, 2, 3]>")]
+    #[should_panic(expected = "\n\texpected: iterator to contain <5>\n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_iterable_does_not_contain_value() {
         let mut test_into_iter = LinkedList::new();
         test_into_iter.push_back(1);
@@ -464,7 +464,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: iterator to contain items <[1, 6]>\
-                               \n\t but was: <[1, 2, 3]>")]
+                               \n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_iterable_does_not_contain_all_expected_values() {
         let mut test_into_iter = LinkedList::new();
         test_into_iter.push_back(1);
@@ -482,7 +482,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: iterator to contain items <[1, 6]>\
-                               \n\t but was: <[1, 2, 3]>")]
+                               \n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_iterator_does_not_contain_all_expected_values() {
         let test_vec = vec![1, 2, 3];
         assert_that(&test_vec.iter()).contains_all_of(&vec![&1, &6]);
@@ -490,7 +490,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: iterator to contain items <[1, 3, 1]>\
-                               \n\t but was: <[1, 2, 3]>")]
+                               \n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_iterator_does_not_contain_all_expected_values_exactly() {
         let test_vec = vec![1, 2, 3];
         assert_that(&test_vec.iter()).contains_all_of(&vec![&1, &1, &3]);
@@ -506,7 +506,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Iterator item of <4> (read <[1, 2]>)\
-                               \n\t but was: Iterator item of <3> (read <[1, 2]>)")]
+                               \n\tbut was: Iterator item of <3> (read <[1, 2]>)")]
     fn should_panic_if_iteratable_does_not_equal_expected_iterator() {
         let expected_vec = vec![1, 2, 4];
         let test_vec = vec![1, 2, 3];
@@ -529,7 +529,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: iterator to contain <5>\n\t but was: <[1, 2, 3]>")]
+    #[should_panic(expected = "\n\texpected: iterator to contain <5>\n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_iterator_does_not_contain_value() {
         let test_vec = vec![1, 2, 3];
         assert_that(&test_vec.iter()).contains(&5);
@@ -542,7 +542,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: iterator to not contain <2>\n\t but was: <[1, 2, 3]>")]
+    #[should_panic(expected = "\n\texpected: iterator to not contain <2>\n\tbut was: <[1, 2, 3]>")]
     fn should_panic_if_iterator_does_contain_value_but_expected_not_to() {
         let test_vec = vec![1, 2, 3];
         assert_that(&test_vec.iter()).does_not_contain(&2);
@@ -558,7 +558,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: Iterator item of <4> (read <[1, 2]>)\
-                               \n\t but was: Iterator item of <3> (read <[1, 2]>)")]
+                               \n\tbut was: Iterator item of <3> (read <[1, 2]>)")]
     fn should_panic_if_iterator_does_not_equal_expected_iterator() {
         let expected_vec = vec![1, 2, 4];
         let test_vec = vec![1, 2, 3];
@@ -600,7 +600,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: iterator to contain <1>\n\t but was: <[5, 6]>")]
+    #[should_panic(expected = "\n\texpected: iterator to contain <1>\n\tbut was: <[5, 6]>")]
     fn should_panic_if_vec_does_not_contain_mapped_value() {
         let test_vec = vec![TestStruct { value: 5 }, TestStruct { value: 6 }];
         assert_that(&test_vec).mapped_contains(|val| val.value, &1);

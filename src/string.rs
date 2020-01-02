@@ -232,7 +232,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: string equals to <\"World\">\
-                               \n\t but was: <\"Hello\">")]
+                               \n\tbut was: <\"Hello\">")]
     fn should_panic_if_str_does_not_equals_to_value() {
         let value = "Hello";
         assert_that(&value).equals_to(&"World");
@@ -246,7 +246,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: string starting with <\"A\">\
-                               \n\t but was: <\"Hello\">")]
+                               \n\tbut was: <\"Hello\">")]
     fn should_panic_if_str_does_not_start_with_value() {
         let value = "Hello";
         assert_that(&value).starts_with(&"A");
@@ -259,7 +259,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: string ending with <\"A\">\n\t but was: <\"Hello\">")]
+    #[should_panic(expected = "\n\texpected: string ending with <\"A\">\n\tbut was: <\"Hello\">")]
     fn should_panic_if_str_does_not_end_with_value() {
         let value = "Hello";
         assert_that(&value).ends_with(&"A");
@@ -272,7 +272,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: string containing <\"A\">\n\t but was: <\"Hello\">")]
+    #[should_panic(expected = "\n\texpected: string containing <\"A\">\n\tbut was: <\"Hello\">")]
     fn should_panic_if_str_does_not_contain_value() {
         let value = "Hello";
         assert_that(&value).contains(&"A");
@@ -285,7 +285,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: an empty string\n\t but was: <\"Hello\">")]
+    #[should_panic(expected = "\n\texpected: an empty string\n\tbut was: <\"Hello\">")]
     fn should_panic_if_str_is_not_empty() {
         let value = "Hello";
         assert_that(&value).is_empty();
@@ -315,7 +315,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "\n\texpected: string starting with <\"A\">\
-                               \n\t but was: <\"Hello\">")]
+                               \n\tbut was: <\"Hello\">")]
     fn should_panic_if_string_does_not_start_with_value() {
         let value = "Hello".to_owned();
         assert_that(&value).starts_with(&"A");
@@ -328,7 +328,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: string ending with <\"A\">\n\t but was: <\"Hello\">")]
+    #[should_panic(expected = "\n\texpected: string ending with <\"A\">\n\tbut was: <\"Hello\">")]
     fn should_panic_if_string_does_not_end_with_value() {
         let value = "Hello".to_owned();
         assert_that(&value).ends_with(&"A");
@@ -341,7 +341,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: string containing <\"A\">\n\t but was: <\"Hello\">")]
+    #[should_panic(expected = "\n\texpected: string containing <\"A\">\n\tbut was: <\"Hello\">")]
     fn should_panic_if_string_does_not_contain_value() {
         let value = "Hello".to_owned();
         assert_that(&value).contains(&"A");
@@ -354,7 +354,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: an empty string\n\t but was: <\"Hello\">")]
+    #[should_panic(expected = "\n\texpected: an empty string\n\tbut was: <\"Hello\">")]
     fn should_panic_if_string_is_not_empty() {
         let value = "Hello".to_owned();
         assert_that(&value).is_empty();

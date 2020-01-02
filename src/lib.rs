@@ -147,6 +147,7 @@ use colours::{TERM_BLUE, TERM_BOLD, TERM_GREEN, TERM_RED, TERM_RESET};
 
 pub mod boolean;
 pub mod hashmap;
+pub mod hashset;
 pub mod iter;
 pub mod numeric;
 pub mod option;
@@ -207,6 +208,7 @@ macro_rules! asserting {
     ($description:tt, $($param:expr),*) => {
         asserting!(format!($description, $($param),*))
     };
+    // Also accept a final comma
     ($description:tt, $($param:expr),*,) => {
         asserting!(format!($description, $($param),*))
     };

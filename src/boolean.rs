@@ -46,7 +46,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: bool to be <true>\n\t but was: <false>")]
+    #[should_panic(expected = "\n\texpected: bool to be <true>\n\tbut was: <false>")]
     pub fn should_panic_if_value_is_expected_to_be_true_and_is_not() {
         assert_that(&false).is_true();
     }
@@ -57,7 +57,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "\n\texpected: bool to be <false>\n\t but was: <true>")]
+    #[should_panic(expected = "\n\texpected: bool to be <false>\n\tbut was: <true>")]
     pub fn should_panic_if_value_is_expected_to_be_false_and_is_not() {
         assert_that(&true).is_false();
     }
