@@ -201,10 +201,10 @@ macro_rules! assert_that {
 
 #[macro_export]
 macro_rules! asserting {
-    (&$description:tt) => {
+    (&$description:expr) => {
         asserting!($description)
     };
-    ($description:tt) => {{
+    ($description:expr) => {{
         let line = line!();
         let file = file!();
         asserting(&$description).at_location(format!("{}:{}", file, line))
